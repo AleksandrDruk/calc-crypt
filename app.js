@@ -62,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (size) {
             wrapper.style.width = size.width + 'px';
             wrapper.style.height = size.height + 'px';
-            updateChartSize();
         }
     }
 
@@ -104,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Загружаем настройки при старте
     loadSettings();
+    loadChartSize();
 
     // Обработчики событий для изменения размера
     resizeHandle.addEventListener('mousedown', (e) => {
@@ -140,6 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
             isResizing = false;
             wrapper.style.pointerEvents = 'auto';
             resizeHandle.style.background = '#374151';
+            // Сохраняем размеры
+            saveChartSize(wrapper.offsetWidth, wrapper.offsetHeight);
         }
     });
 
