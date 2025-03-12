@@ -57,27 +57,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Стили для маркера изменения размера
     resizeHandle.style.cssText = `
         position: absolute;
-        right: -2px;
-        bottom: -2px;
-        width: 16px;
-        height: 16px;
-        cursor: se-resize;
+        left: 0;
+        bottom: 0;
+        width: 20px;
+        height: 20px;
+        cursor: sw-resize;
         background: #374151;
         border: 2px solid #4B5563;
-        border-radius: 0 0 8px 0;
-        z-index: 9999;
+        border-radius: 0 0 0 8px;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     `;
 
     // Добавляем дополнительный элемент для визуального индикатора
     const resizeIcon = document.createElement('div');
     resizeIcon.style.cssText = `
-        position: absolute;
-        right: 3px;
-        bottom: 3px;
-        width: 6px;
-        height: 6px;
-        border-right: 2px solid #9CA3AF;
+        width: 8px;
+        height: 8px;
+        border-left: 2px solid #9CA3AF;
         border-bottom: 2px solid #9CA3AF;
+        margin-top: -4px;
+        margin-right: -4px;
     `;
 
     resizeHandle.appendChild(resizeIcon);
@@ -146,31 +148,101 @@ document.addEventListener('DOMContentLoaded', () => {
     // Загружаем сохраненные размеры при старте
     loadChartSize();
 
+    // Элементы форм и настроек
+    const settingsForm = document.getElementById('settingsForm');
+    const defaultBalanceInput = document.getElementById('defaultBalance');
+    const defaultRiskInput = document.getElementById('defaultRisk');
+    const balanceInput = document.getElementById('balance');
+    const riskLevelInput = document.getElementById('riskLevel');
+    const resetAllButton = document.getElementById('resetAll');
+
+    // Элементы калькулятора позиции
+    const positionForm = document.getElementById('positionSizeForm');
+    const positionResult = document.getElementById('positionResult');
+    const lossAmountSpan = document.getElementById('lossAmount');
+    const positionSizeSpan = document.getElementById('positionSize');
+    const stopLossInput = document.getElementById('stopLoss');
+
+    // Функция для загрузки настроек
+    function loadSettings() {
+        const settings = JSON.parse(localStorage.getItem('tradeSettings') || '{}');
+        if (settings.balance) {
+            defaultBalanceInput.value = settings.balance;
+            balanceInput.value = settings.balance;
+        }
+        if (settings.risk) {
+            defaultRiskInput.value = settings.risk;
+            riskLevelInput.value = settings.risk;
+        }
+    }
+
+    // Сохранение настроек
+    settingsForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const settings = {
+            balance: parseFloat(defaultBalanceInput.value.replace(',', '.')) || 0,
+            risk: parseFloat(defaultRiskInput.value.replace(',', '.')) || 0
+        };
+        localStorage.setItem('tradeSettings', JSON.stringify(settings));
+        balanceInput.value = settings.balance;
+        riskLevelInput.value = settings.risk;
+        alert('Настройки сохранены');
+    });
+
+    // Функция расчета позиции
+    function calculatePosition() {
+        const balance = parseFloat(balanceInput.value.replace(',', '.')) || 0;
+        const stopLoss = parseFloat(stopLossInput.value.replace(',', '.')) || 0;
+        const riskPercent = parseFloat(riskLevelInput.value.replace(',', '.')) || 0;
+
+        if (balance > 0 && stopLoss > 0 && riskPercent > 0) {
+            const riskAmount = (balance * riskPercent) / 100;
+            const positionSize = (riskAmount / stopLoss) * 100;
+
+            lossAmountSpan.textContent = riskAmount.toFixed(2) + ' USDT';
+            positionSizeSpan.textContent = positionSize.toFixed(2) + ' USDT';
+            positionResult.classList.remove('hidden');
+        }
+    }
+
+    // Обработчики событий для калькулятора
+    [balanceInput, stopLossInput, riskLevelInput].forEach(input => {
+        input.addEventListener('input', (e) => {
+            if (e.target.value.includes(',')) {
+                e.target.value = e.target.value.replace(',', '.');
+            }
+            calculatePosition();
+        });
+    });
+
+    // Сброс всех полей
+    resetAllButton.addEventListener('click', () => {
+        if (confirm('Сбросить все поля?')) {
+            positionForm.reset();
+            positionResult.classList.add('hidden');
+        }
+    });
+
+    // Загружаем настройки при старте
+    loadSettings();
+
     // После инициализации виджета
     widget.onChartReady(() => {
+        const chart = widget.chart();
+        
         // Подписываемся на события рисования
-        widget.chart().subscribe('drawing', (params) => {
-            if (params.drawing) {
-                const drawingData = params.drawing;
+        chart.onDrawingComplete((drawing) => {
+            if (drawing && drawing.points && drawing.points.length >= 2) {
+                const entryPrice = drawing.points[0].price;
+                const stopPrice = drawing.points[1].price;
                 
-                // Проверяем, что это позиция (long/short)
-                if (drawingData.type === 'position') {
-                    const entryPrice = drawingData.points[0].price;
-                    const stopPrice = drawingData.points[1].price;
+                // Заполняем поля калькулятора
+                if (entryPriceInput && stopLossInput) {
+                    entryPriceInput.value = entryPrice.toFixed(2);
+                    stopLossInput.value = stopPrice.toFixed(2);
                     
-                    // Находим элементы калькулятора
-                    const entryInput = document.getElementById('entryPrice');
-                    const stopInput = document.getElementById('stopLoss');
-                    
-                    // Устанавливаем значения
-                    if (entryInput && stopInput) {
-                        entryInput.value = entryPrice;
-                        stopInput.value = stopPrice;
-                        
-                        // Вызываем пересчет калькулятора
-                        calculatePosition();
-                        calculateRiskReward();
-                    }
+                    // Вызываем пересчет
+                    calculatePosition();
                 }
             }
         });
