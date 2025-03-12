@@ -1,47 +1,86 @@
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', () => {
-    // Элементы форм и настроек
-    const settingsForm = document.getElementById('settingsForm');
-    const defaultBalanceInput = document.getElementById('defaultBalance');
-    const defaultRiskInput = document.getElementById('defaultRisk');
-    const balanceInput = document.getElementById('balance');
-    const riskLevelInput = document.getElementById('riskLevel');
-    const resetAllButton = document.getElementById('resetAll');
-    const wrapper = document.getElementById('tradingview_6f5db-wrapper');
-    const resizeHandle = document.createElement('div');
+    // Загружаем сохраненный символ или используем BTCUSDT по умолчанию
+    const savedSymbol = localStorage.getItem('selectedSymbol') || 'BINANCE:BTCUSDT';
 
-    // Инициализация TradingView
     const widget = new TradingView.widget({
-        container_id: "tradingview_6f5db",
+        container_id: "chart",
         autosize: true,
-        symbol: "BINANCE:BTCUSDT",
+        symbol: savedSymbol,
         interval: "60",
         timezone: "Etc/UTC",
         theme: "dark",
         style: "1",
         locale: "ru",
-        toolbar_bg: "#f1f3f6",
+        toolbar_bg: "#131722",
         enable_publishing: false,
         allow_symbol_change: true,
-        hideideas: true,
+        hide_side_toolbar: false,
+        hide_legend: true,
+        hide_top_toolbar: false,
         width: "100%",
         height: "100%",
-        defaultExchange: "BINANCE",
-        studies: []
+        enabled_features: [
+            "header_widget",
+            "header_symbol_search",
+            "header_chart_type",
+            "volume_force_overlay"
+        ],
+        disabled_features: [
+            "header_saveload",
+            "header_screenshot",
+            "widget_logo"
+        ],
+        overrides: {
+            "mainSeriesProperties.style": 1,
+            "mainSeriesProperties.candleStyle.upColor": "#26a69a",
+            "mainSeriesProperties.candleStyle.downColor": "#ef5350",
+            "mainSeriesProperties.candleStyle.wickUpColor": "#26a69a",
+            "mainSeriesProperties.candleStyle.wickDownColor": "#ef5350",
+            "paneProperties.background": "#131722",
+            "paneProperties.vertGridProperties.color": "#363c4e",
+            "paneProperties.horzGridProperties.color": "#363c4e",
+            "volumePaneSize": "medium"
+        },
+        saved_data: {
+            content: savedSymbol,
+            onChange: function(content) {
+                localStorage.setItem('selectedSymbol', content);
+            }
+        }
     });
+
+    // Добавляем функционал изменения размера
+    const wrapper = document.getElementById('chart-wrapper');
+    const resizeHandle = document.createElement('div');
 
     // Стили для маркера изменения размера
     resizeHandle.style.cssText = `
         position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 20px;
-        height: 20px;
+        right: -2px;
+        bottom: -2px;
+        width: 16px;
+        height: 16px;
         cursor: se-resize;
         background: #374151;
+        border: 2px solid #4B5563;
         border-radius: 0 0 8px 0;
         z-index: 9999;
     `;
+
+    // Добавляем дополнительный элемент для визуального индикатора
+    const resizeIcon = document.createElement('div');
+    resizeIcon.style.cssText = `
+        position: absolute;
+        right: 3px;
+        bottom: 3px;
+        width: 6px;
+        height: 6px;
+        border-right: 2px solid #9CA3AF;
+        border-bottom: 2px solid #9CA3AF;
+    `;
+
+    resizeHandle.appendChild(resizeIcon);
 
     wrapper.style.position = 'relative';
     wrapper.appendChild(resizeHandle);
@@ -64,46 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.style.height = size.height + 'px';
         }
     }
-
-    function updateChartSize() {
-        const width = wrapper.offsetWidth;
-        const height = wrapper.offsetHeight;
-        console.log('Updating chart size:', width, height);
-        widget.applyOptions({
-            width: width,
-            height: height
-        });
-        widget.timeScale().fitContent();
-    }
-
-    // Функция для загрузки и сохранения настроек
-    function loadSettings() {
-        const settings = JSON.parse(localStorage.getItem('tradeSettings') || '{}');
-        if (settings.balance) {
-            defaultBalanceInput.value = settings.balance;
-            balanceInput.value = settings.balance;
-        }
-        if (settings.risk) {
-            defaultRiskInput.value = settings.risk;
-            riskLevelInput.value = settings.risk;
-        }
-    }
-
-    settingsForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const settings = {
-            balance: parseFloat(defaultBalanceInput.value),
-            risk: parseFloat(defaultRiskInput.value)
-        };
-        localStorage.setItem('tradeSettings', JSON.stringify(settings));
-        balanceInput.value = settings.balance;
-        riskLevelInput.value = settings.risk;
-        alert('Настройки сохранены');
-    });
-
-    // Загружаем настройки при старте
-    loadSettings();
-    loadChartSize();
 
     // Обработчики событий для изменения размера
     resizeHandle.addEventListener('mousedown', (e) => {
@@ -140,15 +139,40 @@ document.addEventListener('DOMContentLoaded', () => {
             isResizing = false;
             wrapper.style.pointerEvents = 'auto';
             resizeHandle.style.background = '#374151';
-            // Сохраняем размеры
             saveChartSize(wrapper.offsetWidth, wrapper.offsetHeight);
         }
     });
 
-    // Добавим обработчик изменения размера окна
-    window.addEventListener('resize', () => {
-        if (widget) {
-            updateChartSize();
-        }
+    // Загружаем сохраненные размеры при старте
+    loadChartSize();
+
+    // После инициализации виджета
+    widget.onChartReady(() => {
+        // Подписываемся на события рисования
+        widget.chart().subscribe('drawing', (params) => {
+            if (params.drawing) {
+                const drawingData = params.drawing;
+                
+                // Проверяем, что это позиция (long/short)
+                if (drawingData.type === 'position') {
+                    const entryPrice = drawingData.points[0].price;
+                    const stopPrice = drawingData.points[1].price;
+                    
+                    // Находим элементы калькулятора
+                    const entryInput = document.getElementById('entryPrice');
+                    const stopInput = document.getElementById('stopLoss');
+                    
+                    // Устанавливаем значения
+                    if (entryInput && stopInput) {
+                        entryInput.value = entryPrice;
+                        stopInput.value = stopPrice;
+                        
+                        // Вызываем пересчет калькулятора
+                        calculatePosition();
+                        calculateRiskReward();
+                    }
+                }
+            }
+        });
     });
 }); 
