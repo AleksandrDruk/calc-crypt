@@ -9,6 +9,18 @@
       type="text/javascript"
       src="https://s3.tradingview.com/tv.js"
     ></script>
+    <style>
+      /* Убираем стрелки с полей type="number" */
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+    </style>
   </head>
   <body class="bg-gray-900">
     <div class="flex min-h-screen">
@@ -23,10 +35,11 @@
           <div class="group relative">
             <label
               class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >Баланс (USDT)</label
             >
+              Баланс (USDT)
+            </label>
             <input
-              type="number"
+              inputmode="decimal"
               id="defaultBalance"
               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
@@ -39,10 +52,11 @@
           <div class="group relative">
             <label
               class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >Уровень риска (%)</label
             >
+              Уровень риска (%)
+            </label>
             <input
-              type="number"
+              inputmode="decimal"
               id="defaultRisk"
               step="0.1"
               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -63,223 +77,122 @@
       </div>
 
       <!-- Основной контент -->
-      <div class="flex-1 p-8">
-        <div class="flex justify-between items-center mb-6">
-          <h1 class="text-3xl font-bold text-gray-800 dark:text-white">
-            Калькуляторы для трейдинга
-          </h1>
-          <button
-            type="button"
-            id="resetAll"
-            class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-          >
-            Сбросить все поля
-          </button>
-        </div>
+      <div class="flex-1 flex">
+        <!-- Калькулятор слева -->
+        <div class="w-1/3 p-8 bg-gray-900">
+          <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-white">Калькулятор позиции</h1>
+            <button
+              type="button"
+              id="resetAll"
+              class="text-sm text-gray-400 hover:text-white transition-colors duration-200"
+            >
+              Сбросить
+            </button>
+          </div>
 
-        <div class="grid md:grid-cols-2 gap-6">
           <!-- Калькулятор размера позиции -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">
-              Калькулятор размера позиции
-            </h2>
-            <form id="positionSizeForm" class="space-y-4">
+          <div
+            class="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700"
+          >
+            <form id="positionSizeForm" class="space-y-6">
               <div>
-                <label class="block text-sm font-medium text-gray-700"
-                  >Баланс (USDT)</label
+                <label class="block text-sm font-medium text-gray-300 mb-2"
+                  >Баланс</label
                 >
-                <input
-                  type="number"
-                  id="balance"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700"
-                  >Стоп-лосс (%)</label
-                >
-                <input
-                  type="number"
-                  id="stopLoss"
-                  step="0.1"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700"
-                  >Уровень риска (%)</label
-                >
-                <input
-                  type="number"
-                  id="riskLevel"
-                  step="0.1"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  required
-                />
-              </div>
-            </form>
-
-            <div id="positionResult" class="mt-4 pt-4 border-t hidden">
-              <h3 class="text-md font-medium text-gray-700 mb-2">Результат:</h3>
-              <p class="text-gray-600">
-                Расчет потери:
-                <span id="lossAmount" class="font-bold text-red-500"></span>
-              </p>
-              <p class="text-gray-600">
-                Размер позиции:
-                <span id="positionSize" class="font-bold text-green-500"></span>
-              </p>
-            </div>
-          </div>
-
-          <!-- Калькулятор риск/прибыль -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">
-              Калькулятор риск/прибыль
-            </h2>
-            <form id="riskRewardForm" class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700"
-                  >Цена открытия</label
-                >
-                <input
-                  type="number"
-                  id="entryPrice"
-                  step="0.0001"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700"
-                  >Цена прибыли</label
-                >
-                <input
-                  type="number"
-                  id="targetPrice"
-                  step="0.0001"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700"
-                  >Цена стоп-лосса</label
-                >
-                <input
-                  type="number"
-                  id="stopPrice"
-                  step="0.0001"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  required
-                />
-              </div>
-
-              <div
-                id="positionType"
-                class="hidden mb-4 p-3 rounded-lg text-center font-medium"
-              >
-                <div
-                  id="longIndicator"
-                  class="hidden bg-green-100 text-green-800 border border-green-200 rounded-lg p-2"
-                >
-                  <svg
-                    class="w-5 h-5 inline-block mr-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 15l7-7 7 7"
-                    ></path>
-                  </svg>
-                  LONG позиция
+                <div class="relative">
+                  <input
+                    inputmode="decimal"
+                    id="balance"
+                    class="w-full bg-gray-700 border-0 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                    required
+                  />
+                  <span class="absolute right-4 top-3 text-gray-400">USDT</span>
                 </div>
-                <div
-                  id="shortIndicator"
-                  class="hidden bg-red-100 text-red-800 border border-red-200 rounded-lg p-2"
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2"
+                  >Стоп-лосс</label
                 >
-                  <svg
-                    class="w-5 h-5 inline-block mr-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 9l-7 7-7-7"
-                    ></path>
-                  </svg>
-                  SHORT позиция
+                <div class="relative">
+                  <input
+                    inputmode="decimal"
+                    id="stopLoss"
+                    step="0.01"
+                    class="w-full bg-gray-700 border-0 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                    required
+                  />
+                  <span class="absolute right-4 top-3 text-gray-400">%</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2"
+                  >Риск</label
+                >
+                <div class="relative">
+                  <input
+                    inputmode="decimal"
+                    id="riskLevel"
+                    step="0.1"
+                    class="w-full bg-gray-700 border-0 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                    required
+                  />
+                  <span class="absolute right-4 top-3 text-gray-400">%</span>
                 </div>
               </div>
             </form>
 
-            <div id="riskRewardResult" class="mt-4 pt-4 border-t hidden">
-              <h3 class="text-md font-medium text-gray-700 mb-2">Результат:</h3>
-              <div class="space-y-3">
-                <p class="text-gray-600">
-                  Цель:
+            <div
+              id="positionResult"
+              class="mt-6 pt-6 border-t border-gray-700 hidden"
+            >
+              <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Возможная потеря:</span>
                   <span
-                    id="targetPercent"
-                    class="font-bold text-green-500"
+                    id="lossAmount"
+                    class="text-lg font-medium text-red-400"
                   ></span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Размер позиции:</span>
                   <span
-                    id="targetPrice"
-                    class="text-sm text-gray-500 ml-1"
+                    id="positionSize"
+                    class="text-lg font-medium text-green-400"
                   ></span>
-                </p>
-                <p class="text-gray-600">
-                  Стоп:
-                  <span id="stopPercent" class="font-bold text-red-500"></span>
-                  <span
-                    id="stopPriceDisplay"
-                    class="text-sm text-gray-500 ml-1"
-                  ></span>
-                </p>
-                <p class="text-gray-600">
-                  Соотношение риск/прибыль:
-                  <span id="riskReward" class="font-bold text-blue-500"></span>
-                </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div
-          id="chart-wrapper"
-          style="
-            width: 80%;
-            height: 600px;
-            margin: 20px auto;
-            border: 1px solid #374151;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            background: #131722;
-          "
-        >
+        <!-- График справа -->
+        <div class="w-2/3 h-screen p-0">
           <div
-            id="chart"
+            id="chart-wrapper"
             style="
               width: 100%;
-              height: 100%;
-              position: absolute;
-              top: 0;
-              left: 0;
+              height: 100vh;
+              border: 1px solid #374151;
+              border-radius: 0;
+              overflow: hidden;
+              position: relative;
+              background: #131722;
             "
-          ></div>
+          >
+            <div
+              id="chart"
+              style="
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+              "
+            ></div>
+          </div>
         </div>
       </div>
     </div>
