@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Архив прибыли</title>
+    <title>Архив - Trading Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/air-datepicker@latest/air-datepicker.css"
@@ -163,247 +163,253 @@
 
       <!-- Основной контент -->
       <div class="flex-1 p-8">
-        <div class="flex justify-between items-start gap-8">
-          <!-- Левая часть с итогами -->
-          <div class="flex-1">
-            <div class="bg-gray-800 rounded-lg p-6">
-              <h2 class="text-xl font-semibold mb-4">Итоги за период</h2>
-              <div id="periodTotal" class="text-4xl font-bold text-blue-400">
-                —
-              </div>
-            </div>
-          </div>
-
-          <!-- Правая часть с календарем -->
-          <div class="w-[380px]">
-            <div class="rounded-lg p-4">
-              <div id="dateRange"></div>
-            </div>
-          </div>
+        <div class="mb-8">
+          <a
+            href="profit.html"
+            class="text-gray-400 hover:text-white transition-colors"
+          >
+            ← Вернуться к прибыли
+          </a>
         </div>
 
-        <!-- Контент архива -->
-        <div id="archiveContent" class="mt-8 grid gap-4"></div>
+        <h1 class="text-2xl font-bold mb-8">Архив результатов</h1>
+
+        <!-- Кнопки экспорта/импорта -->
+        <div class="flex gap-4 mb-8">
+          <button
+            id="exportArchive"
+            class="py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            Экспорт архива
+          </button>
+          <label
+            for="importArchive"
+            class="py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
+          >
+            Импорт архива
+          </label>
+          <input type="file" id="importArchive" accept=".json" class="hidden" />
+        </div>
+
+        <!-- Список архивных недель -->
+        <div id="archiveList" class="space-y-4">
+          <!-- Здесь будут отображаться архивные записи -->
+        </div>
       </div>
     </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const periodTotal = document.getElementById("periodTotal");
+        const archiveList = document.getElementById("archiveList");
+        const exportArchiveBtn = document.getElementById("exportArchive");
+        const importArchiveInput = document.getElementById("importArchive");
+        const archive = JSON.parse(
+          localStorage.getItem("weeklyArchive") || "[]"
+        );
 
-        // Устанавливаем начальные даты
-        const today = new Date();
-        const threeMonthsAgo = new Date();
-        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        // Функция экспорта архива
+        function exportArchive() {
+          // Получаем архив из localStorage
+          const archive = JSON.parse(
+            localStorage.getItem("weeklyArchive") || "[]"
+          );
 
-        // Инициализация календаря
-        const calendar = new AirDatepicker("#dateRange", {
-          locale: {
-            days: [
-              "Воскресенье",
-              "Понедельник",
-              "Вторник",
-              "Среда",
-              "Четверг",
-              "Пятница",
-              "Суббота",
-            ],
-            daysShort: ["Вос", "Пон", "Вто", "Сре", "Чет", "Пят", "Суб"],
-            daysMin: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
-            months: [
-              "Январь",
-              "Февраль",
-              "Март",
-              "Апрель",
-              "Май",
-              "Июнь",
-              "Июль",
-              "Август",
-              "Сентябрь",
-              "Октябрь",
-              "Ноябрь",
-              "Декабрь",
-            ],
-            monthsShort: [
-              "Янв",
-              "Фев",
-              "Мар",
-              "Апр",
-              "Май",
-              "Июн",
-              "Июл",
-              "Авг",
-              "Сен",
-              "Окт",
-              "Ноя",
-              "Дек",
-            ],
-            today: "Сегодня",
-            clear: "Очистить",
-            dateFormat: "dd.MM.yyyy",
-            timeFormat: "HH:mm",
-            firstDay: 1,
-          },
-          dateFormat: "dd.MM.yyyy",
-          range: true,
-          inline: true,
-          minDate: new Date(2020, 0, 1),
-          maxDate: new Date(),
-          selectedDates: [threeMonthsAgo, today],
-          onSelect({ date, formattedDate, datepicker }) {
-            if (date && date.length === 2) {
-              loadArchive(date[0], date[1]);
-            }
-          },
-        });
+          // Создаем объект с данными архива и метаданными
+          const data = {
+            archive: archive,
+            exportDate: new Date().toISOString(),
+            version: "1.0.0",
+          };
 
-        function loadArchive(startDate = threeMonthsAgo, endDate = today) {
-          try {
-            const archiveContent = document.getElementById("archiveContent");
-            if (!archiveContent) {
-              console.error("Element archiveContent not found");
-              return;
-            }
+          // Создаем файл для скачивания
+          const dataStr = JSON.stringify(data, null, 2);
+          const dataBlob = new Blob([dataStr], { type: "application/json" });
 
-            const savedData = JSON.parse(
-              localStorage.getItem("profitData") || "{}"
-            );
-            if (!savedData.rows || !Array.isArray(savedData.rows)) {
-              console.log("No data found or invalid data format");
-              archiveContent.innerHTML =
-                '<div class="text-gray-400">Нет данных для отображения</div>';
-              return;
-            }
+          // Создаем ссылку для скачивания
+          const url = URL.createObjectURL(dataBlob);
+          const link = document.createElement("a");
+          link.href = url;
 
-            // Очищаем контент
-            archiveContent.innerHTML = "";
+          // Формируем имя файла с текущей датой
+          const now = new Date();
+          const dateStr = now.toISOString().split("T")[0]; // YYYY-MM-DD
+          link.download = `trading-archive-${dateStr}.json`;
 
-            // Фильтруем и группируем данные по неделям
-            const filteredData = savedData.rows
-              .map((row) => ({
-                date: new Date(row.date),
-                result: parseFloat(row.result) || 0, // Преобразуем в число
-              }))
-              .filter((row) => row.date >= startDate && row.date <= endDate);
+          // Запускаем скачивание
+          document.body.appendChild(link);
+          link.click();
 
-            // Считаем общий результат за период
-            const totalResult = filteredData.reduce(
-              (sum, row) => sum + row.result,
-              0
-            );
-            periodTotal.textContent = `${totalResult.toFixed(2)}%`;
-            periodTotal.className = `text-4xl font-bold ${
-              totalResult > 0
-                ? "text-green-400"
-                : totalResult < 0
-                ? "text-red-400"
-                : "text-gray-400"
-            }`;
-
-            // Группируем по неделям
-            const weeks = {};
-            filteredData.forEach((row) => {
-              const weekStart = new Date(row.date);
-              weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-              const weekKey = weekStart.toISOString();
-
-              if (!weeks[weekKey]) {
-                weeks[weekKey] = {
-                  start: weekStart,
-                  entries: [],
-                  total: 0,
-                };
-              }
-
-              weeks[weekKey].entries.push(row);
-              weeks[weekKey].total += row.result;
-            });
-
-            // Отображаем данные по неделям
-            Object.values(weeks)
-              .sort((a, b) => b.start - a.start)
-              .forEach((week) => {
-                const weekDiv = document.createElement("div");
-                weekDiv.className = "bg-gray-800 rounded-lg overflow-hidden";
-
-                const startDate = week.start.toLocaleDateString("ru-RU", {
-                  day: "2-digit",
-                  month: "2-digit",
-                });
-                const endDate = new Date(week.start);
-                endDate.setDate(endDate.getDate() + 6);
-                const endDateStr = endDate.toLocaleDateString("ru-RU", {
-                  day: "2-digit",
-                  month: "2-digit",
-                });
-
-                const resultClass =
-                  week.total > 0
-                    ? "text-green-400"
-                    : week.total < 0
-                    ? "text-red-400"
-                    : "text-gray-400";
-
-                weekDiv.innerHTML = `
-                <div class="p-4 border-b border-gray-700">
-                  <div class="flex justify-between items-center">
-                    <h3 class="font-medium">Неделя ${startDate} - ${endDateStr}</h3>
-                    <div class="font-medium ${resultClass}">
-                      ${week.total.toFixed(2)}%
-                    </div>
-                  </div>
-                </div>
-                <div class="p-4">
-                  <table class="w-full">
-                    <thead>
-                      <tr class="text-sm text-gray-400">
-                        <th class="text-left py-2">Дата</th>
-                        <th class="text-right py-2">Результат</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      ${week.entries
-                        .sort((a, b) => a.date - b.date)
-                        .map((entry) => {
-                          const date = entry.date.toLocaleDateString("ru-RU", {
-                            day: "2-digit",
-                            month: "2-digit",
-                          });
-                          const resultClass =
-                            entry.result > 0
-                              ? "text-green-400"
-                              : entry.result < 0
-                              ? "text-red-400"
-                              : "text-gray-400";
-                          return `
-                            <tr class="border-t border-gray-700">
-                              <td class="py-2">${date}</td>
-                              <td class="text-right ${resultClass}">
-                                ${entry.result.toFixed(2)}%
-                              </td>
-                            </tr>
-                          `;
-                        })
-                        .join("")}
-                    </tbody>
-                  </table>
-                </div>
-              `;
-
-                archiveContent.appendChild(weekDiv);
-              });
-          } catch (error) {
-            console.error("Error in loadArchive:", error);
-            const archiveContent = document.getElementById("archiveContent");
-            if (archiveContent) {
-              archiveContent.innerHTML =
-                '<div class="text-red-400">Произошла ошибка при загрузке данных</div>';
-            }
-          }
+          // Очищаем
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 100);
         }
 
-        // Загружаем архив при загрузке страницы
-        loadArchive();
+        // Функция импорта архива
+        function importArchive(file) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            try {
+              const data = JSON.parse(e.target.result);
+
+              // Проверяем структуру данных
+              if (!data.archive || !Array.isArray(data.archive)) {
+                throw new Error("Неверный формат файла архива");
+              }
+
+              // Сохраняем архив в localStorage
+              localStorage.setItem(
+                "weeklyArchive",
+                JSON.stringify(data.archive)
+              );
+
+              // Перезагружаем страницу для обновления данных
+              location.reload();
+
+              alert("Архив успешно импортирован!");
+            } catch (error) {
+              console.error("Ошибка при импорте архива:", error);
+              alert("Ошибка при импорте архива: " + error.message);
+            }
+          };
+
+          reader.readAsText(file);
+        }
+
+        // Обработчик кнопки экспорта
+        exportArchiveBtn.addEventListener("click", exportArchive);
+
+        // Обработчик выбора файла для импорта
+        importArchiveInput.addEventListener("change", (e) => {
+          if (e.target.files.length > 0) {
+            if (
+              confirm(
+                "Импорт архива заменит все текущие данные архива. Продолжить?"
+              )
+            ) {
+              importArchive(e.target.files[0]);
+            }
+            // Сбрасываем input, чтобы можно было выбрать тот же файл повторно
+            e.target.value = "";
+          }
+        });
+
+        if (archive.length === 0) {
+          archiveList.innerHTML = '<p class="text-gray-400">Архив пуст</p>';
+          return;
+        }
+
+        // Сортируем недели в обратном порядке (новые сверху)
+        archive.reverse().forEach((week, index) => {
+          const weekEl = document.createElement("div");
+          weekEl.className =
+            "bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6";
+          weekEl.dataset.index = archive.length - 1 - index; // Сохраняем оригинальный индекс
+
+          // Рассчитываем средний результат
+          const nonZeroTrades = week.trades.filter((t) => t && t.value !== 0);
+          const averageResult =
+            nonZeroTrades.length > 0
+              ? nonZeroTrades.reduce(
+                  (sum, t) => sum + (Number(t.value) || 0),
+                  0
+                ) / nonZeroTrades.length
+              : 0;
+
+          const resultClass =
+            week.totalResult > 0
+              ? "text-green-400"
+              : week.totalResult < 0
+              ? "text-red-400"
+              : "text-gray-400";
+
+          weekEl.innerHTML = `
+            <div class="flex justify-between items-start mb-4 relative pr-8">
+              <div>
+                <h3 class="text-lg font-medium">${week.weekStart} - ${
+            week.weekEnd
+          }</h3>
+                <p class="text-sm text-gray-400 mt-1">Всего сделок: ${
+                  week.totalTrades
+                }</p>
+              </div>
+              <div class="text-right">
+                <div class="text-xl font-bold ${resultClass}">${(
+            week.totalResult || 0
+          ).toFixed(2)}%</div>
+                <div class="text-sm text-gray-400 mt-1">В среднем: ${averageResult.toFixed(
+                  2
+                )}%</div>
+              </div>
+              <button class="delete-week absolute top-0 right-0 -mt-3 -mr-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2 rounded-full transition-all shadow-lg">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-700/50">
+              ${week.trades
+                .map(
+                  (trade) => `
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">${trade.day}</span>
+                  <span class="${
+                    trade.value > 0
+                      ? "text-green-400"
+                      : trade.value < 0
+                      ? "text-red-400"
+                      : "text-gray-400"
+                  }">
+                    ${
+                      trade.value !== undefined && trade.value !== null
+                        ? Number(trade.value).toFixed(2) + "%"
+                        : "-"
+                    }
+                  </span>
+                </div>
+              `
+                )
+                .join("")}
+            </div>
+          `;
+
+          archiveList.appendChild(weekEl);
+        });
+
+        // Добавляем обработчики для кнопок удаления
+        document.querySelectorAll(".delete-week").forEach((button) => {
+          button.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const weekEl = this.closest("div[data-index]");
+            const index = parseInt(weekEl.dataset.index);
+
+            if (
+              confirm("Вы уверены, что хотите удалить эту неделю из архива?")
+            ) {
+              // Получаем архив
+              const archive = JSON.parse(
+                localStorage.getItem("weeklyArchive") || "[]"
+              );
+
+              // Удаляем неделю
+              archive.splice(index, 1);
+
+              // Сохраняем обновленный архив
+              localStorage.setItem("weeklyArchive", JSON.stringify(archive));
+
+              // Удаляем элемент из DOM
+              weekEl.remove();
+
+              // Если архив пуст, показываем сообщение
+              if (archive.length === 0) {
+                archiveList.innerHTML =
+                  '<p class="text-gray-400">Архив пуст</p>';
+              }
+            }
+          });
+        });
       });
     </script>
   </body>
