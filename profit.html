@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Моя прибыль</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Убираем стрелки с input[type="number"] */
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-900 text-white">
+    <div class="flex min-h-screen">
+      <!-- Боковое меню -->
+      <div
+        class="w-72 bg-gray-800/50 backdrop-blur-lg border-r border-gray-700/50 p-8"
+      >
+        <div class="mb-8">
+          <h1 class="text-xl font-semibold text-white mb-1">Trading Tools</h1>
+          <p class="text-sm text-gray-400">Инструменты для трейдинга</p>
+        </div>
+        <nav class="space-y-1">
+          <a
+            href="index.html"
+            class="flex items-center px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+          >
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
+            </svg>
+            Калькулятор
+          </a>
+          <a
+            href="profit.html"
+            class="flex items-center px-4 py-3 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20"
+          >
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            Моя прибыль
+          </a>
+          <a
+            href="archive.html"
+            class="flex items-center px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+          >
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            Архив
+          </a>
+          <!-- Кнопка настроек -->
+          <button
+            id="settingsBtn"
+            class="w-full flex items-center px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+          >
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            Настройки
+          </button>
+          <!-- Форма настроек (скрыта по умолчанию) -->
+          <div id="settingsForm" class="hidden mt-2">
+            <div
+              class="space-y-3 bg-gray-800/50 p-3 rounded-xl border border-gray-700/50"
+            >
+              <div>
+                <label class="block text-sm text-gray-400 mb-2"
+                  >День начала недели</label
+                >
+                <select
+                  id="weekStartDay"
+                  class="w-full bg-gray-900/50 border border-gray-700/50 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-blue-500/50 text-sm"
+                >
+                  <option value="1">Понедельник</option>
+                  <option value="2">Вторник</option>
+                  <option value="3">Среда</option>
+                  <option value="4">Четверг</option>
+                  <option value="5">Пятница</option>
+                  <option value="6">Суббота</option>
+                  <option value="0">Воскресенье</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm text-gray-400 mb-2"
+                  >Ожидаемый результат (%)</label
+                >
+                <input
+                  id="expectedResult"
+                  class="w-full bg-gray-900/50 border border-gray-700/50 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-blue-500/50 text-sm text-center"
+                  placeholder="2.00"
+                  value="2"
+                />
+              </div>
+              <button
+                id="saveSettings"
+                class="w-full bg-blue-500/20 border border-blue-500/20 text-blue-400 py-1.5 px-4 rounded-lg hover:bg-blue-500/30 transition-colors text-sm"
+              >
+                Сохранить
+              </button>
+            </div>
+          </div>
+        </nav>
+        <div class="mt-auto pt-8 border-t border-gray-700/50 mt-8">
+          <div class="text-xs text-gray-400">Версия 1.0.0</div>
+        </div>
+      </div>
+
+      <!-- Основной контент -->
+      <div class="flex-1 p-8">
+        <!-- Верхняя навигация -->
+        <div class="mb-8">
+          <a
+            href="index.html"
+            class="text-gray-400 hover:text-white transition-colors"
+          >
+            ← Вернуться к калькулятору
+          </a>
+        </div>
+
+        <!-- Заголовок и кнопки -->
+        <div class="flex justify-between items-center mb-8">
+          <div>
+            <h1 class="text-2xl font-bold">Моя прибыль</h1>
+            <p class="text-gray-400 text-sm mt-1 cursor-pointer">
+              Текущая неделя:
+              <span
+                id="currentWeek"
+                class="hover:text-white transition-colors"
+              ></span>
+            </p>
+          </div>
+          <div class="flex gap-4">
+            <a
+              href="archive.html"
+              class="py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Архив
+            </a>
+            <button
+              id="startNewWeek"
+              class="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Начать новую неделю
+            </button>
+            <button
+              id="clearData"
+              class="py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Очистить все
+            </button>
+          </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div class="bg-gray-800 rounded-lg p-6">
+            <h3 class="text-gray-400 text-sm mb-2">Всего сделок</h3>
+            <div id="totalTrades" class="text-2xl font-bold">0</div>
+          </div>
+          <div class="bg-gray-800 rounded-lg p-6">
+            <h3 class="text-gray-400 text-sm mb-2">Винрейт</h3>
+            <div id="winRate" class="text-2xl font-bold">0%</div>
+          </div>
+          <div class="bg-gray-800 rounded-lg p-6">
+            <h3 class="text-gray-400 text-sm mb-2">Общий результат</h3>
+            <div id="totalResult" class="text-2xl font-bold">0%</div>
+          </div>
+        </div>
+
+        <!-- Таблица сделок и дашборд -->
+        <div class="grid grid-cols-[1fr,auto] gap-8">
+          <!-- Таблица сделок -->
+          <div
+            class="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden"
+          >
+            <table class="w-full">
+              <thead>
+                <tr class="text-sm text-gray-400 border-b border-gray-700/50">
+                  <th class="text-left px-5 py-3 w-36">Дата</th>
+                  <th class="text-center px-5 py-3 flex-1">Ожидаемый</th>
+                  <th class="text-center px-5 py-3 w-36">Результат</th>
+                </tr>
+              </thead>
+              <tbody id="tradesTableBody">
+                <!-- Строки для текущей недели -->
+                <tr
+                  class="border-b border-gray-700/50 transition-colors hover:bg-gray-800/50"
+                >
+                  <td class="px-5 py-3 font-medium">Среда</td>
+                  <td class="px-5 py-3">
+                    <div class="text-center text-gray-400">2%</div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="relative group">
+                      <input
+                        type="text"
+                        step="0.01"
+                        class="w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600"
+                        placeholder="0.00"
+                        oninput="this.value = this.value.replace(/[^\d.-]/g, '').replace(/(\..*)\./g, '$1').replace(/^([^.]*\.)(.*)$/, function(a, b, c) { return b + c.replace(/\./g, '')})"
+                      />
+                      <div
+                        class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-gray-700/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                      ></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="border-b border-gray-700/50 transition-colors hover:bg-gray-800/50"
+                >
+                  <td class="px-5 py-3 font-medium">Четверг</td>
+                  <td class="px-5 py-3">
+                    <div class="text-center text-gray-400">2%</div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="relative group">
+                      <input
+                        type="text"
+                        step="0.01"
+                        class="w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600"
+                        placeholder="0.00"
+                        oninput="this.value = this.value.replace(/[^\d.-]/g, '').replace(/(\..*)\./g, '$1').replace(/^([^.]*\.)(.*)$/, function(a, b, c) { return b + c.replace(/\./g, '')})"
+                      />
+                      <div
+                        class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-gray-700/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                      ></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="border-b border-gray-700/50 transition-colors hover:bg-gray-800/50"
+                >
+                  <td class="px-5 py-3 font-medium">Пятница</td>
+                  <td class="px-5 py-3">
+                    <div class="text-center text-gray-400">2%</div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="relative group">
+                      <input
+                        type="text"
+                        step="0.01"
+                        class="w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600"
+                        placeholder="0.00"
+                        oninput="this.value = this.value.replace(/[^\d.-]/g, '').replace(/(\..*)\./g, '$1').replace(/^([^.]*\.)(.*)$/, function(a, b, c) { return b + c.replace(/\./g, '')})"
+                      />
+                      <div
+                        class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-gray-700/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                      ></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="border-b border-gray-700/50 transition-colors hover:bg-gray-800/50"
+                >
+                  <td class="px-5 py-3 font-medium">Суббота</td>
+                  <td class="px-5 py-3">
+                    <div class="text-center text-gray-400">2%</div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="relative group">
+                      <input
+                        type="text"
+                        step="0.01"
+                        class="w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600"
+                        placeholder="0.00"
+                        oninput="this.value = this.value.replace(/[^\d.-]/g, '').replace(/(\..*)\./g, '$1').replace(/^([^.]*\.)(.*)$/, function(a, b, c) { return b + c.replace(/\./g, '')})"
+                      />
+                      <div
+                        class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-gray-700/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                      ></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="border-b border-gray-700/50 transition-colors hover:bg-gray-800/50"
+                >
+                  <td class="px-5 py-3 font-medium">Воскресенье</td>
+                  <td class="px-5 py-3">
+                    <div class="text-center text-gray-400">2%</div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="relative group">
+                      <input
+                        type="text"
+                        step="0.01"
+                        class="w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600"
+                        placeholder="0.00"
+                        oninput="this.value = this.value.replace(/[^\d.-]/g, '').replace(/(\..*)\./g, '$1').replace(/^([^.]*\.)(.*)$/, function(a, b, c) { return b + c.replace(/\./g, '')})"
+                      />
+                      <div
+                        class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-gray-700/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                      ></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="border-b border-gray-700/50 transition-colors hover:bg-gray-800/50"
+                >
+                  <td class="px-5 py-3 font-medium">Понедельник</td>
+                  <td class="px-5 py-3">
+                    <div class="text-center text-gray-400">2%</div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="relative group">
+                      <input
+                        type="text"
+                        step="0.01"
+                        class="w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600"
+                        placeholder="0.00"
+                        oninput="this.value = this.value.replace(/[^\d.-]/g, '').replace(/(\..*)\./g, '$1').replace(/^([^.]*\.)(.*)$/, function(a, b, c) { return b + c.replace(/\./g, '')})"
+                      />
+                      <div
+                        class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-gray-700/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                      ></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="border-b border-gray-700/50 transition-colors hover:bg-gray-800/50"
+                >
+                  <td class="px-5 py-3 font-medium">Вторник</td>
+                  <td class="px-5 py-3">
+                    <div class="text-center text-gray-400">2%</div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="relative group">
+                      <input
+                        type="text"
+                        step="0.01"
+                        class="w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600"
+                        placeholder="0.00"
+                        oninput="this.value = this.value.replace(/[^\d.-]/g, '').replace(/(\..*)\./g, '$1').replace(/^([^.]*\.)(.*)$/, function(a, b, c) { return b + c.replace(/\./g, '')})"
+                      />
+                      <div
+                        class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-gray-700/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                      ></div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Дашборд -->
+          <div class="w-80 space-y-4">
+            <div
+              class="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6"
+            >
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium">Общая статистика</h3>
+                <button
+                  id="clearStats"
+                  class="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                  title="Сбросить статистику"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="space-y-6">
+                <!-- Общий прирост -->
+                <div>
+                  <div class="text-sm text-gray-400 mb-1">Общий прирост</div>
+                  <div id="totalGrowth" class="text-2xl font-bold">0%</div>
+                </div>
+
+                <!-- Общий винрейт -->
+                <div>
+                  <div class="text-sm text-gray-400 mb-1">Общий винрейт</div>
+                  <div id="totalWinRate" class="text-2xl font-bold">0%</div>
+                </div>
+
+                <!-- Всего торговых дней -->
+                <div>
+                  <div class="text-sm text-gray-400 mb-1">
+                    Всего торговых дней
+                  </div>
+                  <div id="totalTradingDays" class="text-2xl font-bold">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно выбора даты недели -->
+    <div
+      id="weekDateModal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden"
+    >
+      <div class="bg-gray-800 rounded-xl p-6 w-96 shadow-2xl">
+        <h3 class="text-xl font-bold mb-4">Выбрать неделю</h3>
+        <div class="mb-4">
+          <label class="block text-gray-400 text-sm mb-2"
+            >Дата начала недели</label
+          >
+          <input
+            type="date"
+            id="weekStartDate"
+            class="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div class="flex justify-end gap-3">
+          <button
+            id="cancelWeekChange"
+            class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
+          >
+            Отмена
+          </button>
+          <button
+            id="confirmWeekChange"
+            class="px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Применить
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const totalTrades = document.getElementById("totalTrades");
+        const winRate = document.getElementById("winRate");
+        const totalResult = document.getElementById("totalResult");
+        const clearStats = document.getElementById("clearStats");
+        const tradesTableBody = document.getElementById("tradesTableBody");
+        const clearDataBtn = document.getElementById("clearData");
+        const startNewWeekBtn = document.getElementById("startNewWeek");
+
+        // Настройки
+        const settingsBtn = document.getElementById("settingsBtn");
+        const settingsForm = document.getElementById("settingsForm");
+        const weekStartDay = document.getElementById("weekStartDay");
+        const expectedResult = document.getElementById("expectedResult");
+        const saveSettings = document.getElementById("saveSettings");
+
+        // Функция для получения даты начала текущей недели
+        function getCurrentWeekStart() {
+          const now = new Date();
+          const day = now.getDay(); // 0 = воскресенье
+          const startDay = parseInt(weekStartDay.value);
+          const diff = day >= startDay ? day - startDay : day + (7 - startDay);
+          now.setDate(now.getDate() - diff);
+          return now;
+        }
+
+        // Функция для получения названий дней недели в нужном порядке
+        function getWeekDays(startDay) {
+          const days = [
+            "Воскресенье",
+            "Понедельник",
+            "Вторник",
+            "Среда",
+            "Четверг",
+            "Пятница",
+            "Суббота",
+          ];
+
+          // Переупорядочиваем массив дней, начиная с выбранного дня
+          const reorderedDays = [
+            ...days.slice(startDay),
+            ...days.slice(0, startDay),
+          ];
+
+          return reorderedDays;
+        }
+
+        // Функция обновления дней недели в таблице
+        function updateTableDays() {
+          const startDay = parseInt(weekStartDay.value);
+          const weekDays = getWeekDays(startDay);
+          const rows = tradesTableBody.querySelectorAll("tr");
+
+          rows.forEach((row, index) => {
+            const dayCell = row.querySelector("td:first-child");
+            dayCell.textContent = weekDays[index];
+          });
+        }
+
+        // Загружаем сохраненные настройки
+        const settings = JSON.parse(
+          localStorage.getItem("profitSettings") || "{}"
+        );
+        weekStartDay.value = settings.weekStartDay || "3"; // По умолчанию среда
+        expectedResult.value = settings.expectedResult || "2";
+        updateTableDays(); // Обновляем дни при загрузке
+        // Обновляем ожидаемые результаты только один раз при загрузке
+        const expectedCells = tradesTableBody.querySelectorAll(
+          "td:nth-child(2) div"
+        );
+        expectedCells.forEach((cell) => {
+          cell.textContent = expectedResult.value + "%";
+        });
+
+        // Функция обновления ожидаемых результатов в таблице
+        function updateExpectedResults() {
+          const expectedCells = tradesTableBody.querySelectorAll(
+            "td:nth-child(2) div"
+          );
+          expectedCells.forEach((cell) => {
+            cell.textContent = expectedResult.value + "%";
+          });
+        }
+
+        // Показать/скрыть форму настроек
+        settingsBtn.addEventListener("click", () => {
+          settingsForm.classList.toggle("hidden");
+          settingsBtn.classList.toggle("text-blue-400");
+          settingsBtn.classList.toggle("bg-blue-500/10");
+          settingsBtn.classList.toggle("border");
+          settingsBtn.classList.toggle("border-blue-500/20");
+        });
+
+        // Валидация ввода ожидаемого результата
+        expectedResult.addEventListener("input", () => {
+          // Разрешаем только цифры и одну точку
+          expectedResult.value = expectedResult.value
+            .replace(/[^\d.]/g, "")
+            .replace(/(\..*)\./g, "$1")
+            .replace(/^0+/, "0")
+            .replace(/^0+([1-9])/, "$1");
+
+          // Ограничиваем до 2 знаков после запятой
+          if (expectedResult.value.includes(".")) {
+            const parts = expectedResult.value.split(".");
+            if (parts[1].length > 2) {
+              expectedResult.value = Number(expectedResult.value).toFixed(2);
+            }
+          }
+
+          // Обновляем значения только в колонке таблицы
+          const expectedCells = tradesTableBody.querySelectorAll(
+            "td:nth-child(2) div"
+          );
+          expectedCells.forEach((cell) => {
+            cell.textContent = expectedResult.value + "%";
+          });
+        });
+
+        // Сохранение настроек
+        saveSettings.addEventListener("click", () => {
+          const settings = {
+            weekStartDay: weekStartDay.value,
+            expectedResult: expectedResult.value,
+          };
+          localStorage.setItem("profitSettings", JSON.stringify(settings));
+
+          // Обновляем дни недели в таблице
+          updateTableDays();
+          // Обновляем только значения в колонке "Ожидаемый"
+          updateExpectedResults();
+
+          // Анимация успешного сохранения
+          saveSettings.textContent = "Сохранено!";
+          saveSettings.classList.add(
+            "bg-green-500/20",
+            "border-green-500/20",
+            "text-green-400"
+          );
+          setTimeout(() => {
+            saveSettings.textContent = "Сохранить";
+            saveSettings.classList.remove(
+              "bg-green-500/20",
+              "border-green-500/20",
+              "text-green-400"
+            );
+          }, 1000);
+        });
+
+        // Функция для форматирования даты
+        function formatDate(date) {
+          // Для отображения используем локализованный формат
+          if (arguments.length > 1 && arguments[1] === "display") {
+            // Если передан третий аргумент (конец периода), проверяем совпадение года
+            if (arguments.length > 2 && arguments[2]) {
+              const endDate = arguments[2];
+              const sameYear = date.getFullYear() === endDate.getFullYear();
+
+              return date.toLocaleDateString("ru", {
+                day: "numeric",
+                month: "long",
+                year: sameYear ? undefined : "numeric",
+              });
+            }
+
+            return date.toLocaleDateString("ru", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            });
+          }
+
+          // Для ключа в localStorage используем формат YYYY-MM-DD
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        }
+
+        // Загружаем сохраненную дату начала недели или используем текущую
+        let weekStart;
+        const savedWeekStart = localStorage.getItem("selectedWeekStart");
+        if (savedWeekStart) {
+          weekStart = new Date(savedWeekStart);
+        } else {
+          weekStart = getCurrentWeekStart();
+        }
+
+        // Отображаем текущую неделю
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6); // +6 для 7 дней
+
+        // Форматируем даты с проверкой на совпадение года
+        const startDateStr = formatDate(weekStart, "display", weekEnd);
+        const endDateStr = formatDate(weekEnd, "display");
+        document.getElementById(
+          "currentWeek"
+        ).textContent = `${startDateStr} - ${endDateStr}`;
+
+        // Обработчик клика по дате
+        document.getElementById("currentWeek").addEventListener("click", () => {
+          // Устанавливаем текущую дату начала недели в поле ввода
+          const currentWeekStart = weekStart || getCurrentWeekStart();
+          document.getElementById("weekStartDate").value =
+            formatDate(currentWeekStart);
+
+          // Показываем модальное окно
+          document.getElementById("weekDateModal").classList.remove("hidden");
+        });
+
+        document
+          .getElementById("cancelWeekChange")
+          .addEventListener("click", () => {
+            document.getElementById("weekDateModal").classList.add("hidden");
+          });
+
+        document
+          .getElementById("confirmWeekChange")
+          .addEventListener("click", () => {
+            const selectedDate = new Date(
+              document.getElementById("weekStartDate").value
+            );
+
+            if (isNaN(selectedDate.getTime())) {
+              alert("Пожалуйста, выберите корректную дату");
+              return;
+            }
+
+            // Обновляем глобальную переменную weekStart
+            weekStart = selectedDate;
+
+            // Обновляем отображение текущей недели
+            const weekEnd = new Date(selectedDate);
+            weekEnd.setDate(selectedDate.getDate() + 6);
+
+            document.getElementById("currentWeek").textContent = `${formatDate(
+              selectedDate,
+              "display"
+            )} - ${formatDate(weekEnd, "display")}`;
+
+            // Сохраняем выбранную дату начала недели в localStorage
+            localStorage.setItem(
+              "selectedWeekStart",
+              selectedDate.toISOString()
+            );
+
+            // Загружаем данные для выбранной недели
+            loadWeekData(selectedDate);
+
+            // Скрываем модальное окно
+            document.getElementById("weekDateModal").classList.add("hidden");
+          });
+
+        // Загружаем сохраненные результаты для текущей недели
+        const inputs = document.querySelectorAll("input[type='text']");
+
+        // Функция загрузки данных для выбранной недели
+        function loadWeekData(weekStart) {
+          const weekKey = formatDate(weekStart);
+          const savedData = JSON.parse(
+            localStorage.getItem("weeklyData") || "{}"
+          );
+          const weekData = savedData[weekKey] || [];
+
+          // Очищаем все инпуты
+          inputs.forEach((input) => {
+            input.value = "";
+            // Удаляем старый суффикс, если есть
+            const oldSuffix = input.parentNode.querySelector("span");
+            if (oldSuffix) oldSuffix.remove();
+
+            // Сбрасываем класс на дефолтный
+            input.className =
+              "w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600 text-white";
+          });
+
+          // Заполняем инпуты данными выбранной недели
+          inputs.forEach((input, index) => {
+            // Устанавливаем начальное значение
+            if (weekData[index]) {
+              input.value = weekData[index];
+              updateInputColor(input);
+            }
+          });
+
+          // Обновляем статистику
+          updateStats();
+        }
+
+        // Загружаем данные для текущей недели
+        loadWeekData(weekStart);
+
+        inputs.forEach((input, index) => {
+          // Сохраняем результат при изменении
+          input.addEventListener("change", () => {
+            const weekKey = formatDate(weekStart);
+            const savedData = JSON.parse(
+              localStorage.getItem("weeklyData") || "{}"
+            );
+            const newWeekData = Array.from(inputs).map((input) =>
+              input.value ? input.value.replace("%", "") : null
+            );
+            savedData[weekKey] = newWeekData;
+            localStorage.setItem("weeklyData", JSON.stringify(savedData));
+            updateInputColor(input);
+            updateStats();
+          });
+
+          // Обновляем цвет при вводе
+          input.addEventListener("input", () => {
+            // Разрешаем только цифры, одну точку и один минус в начале
+            let value = input.value.replace(/[^\d.-]/g, "");
+
+            // Обрабатываем минус (разрешаем только в начале)
+            if (value.lastIndexOf("-") > 0) {
+              value = value.replace(/-/g, "");
+              if (value[0] !== "-") value = "-" + value;
+            }
+
+            // Обрабатываем точку (разрешаем только одну)
+            const parts = value.split(".");
+            if (parts.length > 2)
+              value = parts[0] + "." + parts.slice(1).join("");
+
+            // Обновляем значение
+            input.value = value;
+            updateInputColor(input);
+          });
+        });
+
+        // Функция обновления цвета input в зависимости от значения
+        function updateInputColor(input) {
+          const value = input.value ? parseFloat(input.value) : 0;
+
+          // Ограничиваем до 2 знаков после запятой
+          if (input.value && input.value.includes(".")) {
+            const parts = input.value.split(".");
+            if (parts[1].length > 2) {
+              input.value = Number(input.value).toFixed(2);
+            }
+          }
+
+          input.className = `w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600 ${
+            value > 0
+              ? "text-green-400 border-green-500/20 focus:border-green-500/30"
+              : value < 0
+              ? "text-red-400 border-red-500/20 focus:border-red-500/30"
+              : "text-white"
+          }`;
+
+          // Удаляем старый суффикс если есть
+          const oldSuffix = input.parentNode.querySelector("span");
+          if (oldSuffix) oldSuffix.remove();
+
+          // Добавляем процент только если есть значение
+          if (input.value.trim() !== "") {
+            const suffix = document.createElement("span");
+            suffix.textContent = "%";
+            suffix.style.position = "absolute";
+            suffix.style.right = "12px";
+            suffix.style.top = "50%";
+            suffix.style.transform = "translateY(-50%)";
+            suffix.style.pointerEvents = "none";
+            suffix.className =
+              value > 0
+                ? "text-green-400"
+                : value < 0
+                ? "text-red-400"
+                : "text-gray-500";
+            input.parentNode.appendChild(suffix);
+          }
+        }
+
+        // Функция обновления общей статистики
+        function updateTotalStats() {
+          // Получаем архив
+          const archive = JSON.parse(
+            localStorage.getItem("weeklyArchive") || "[]"
+          );
+
+          // Получаем текущую неделю
+          const currentWeekData = Array.from(inputs)
+            .filter((input) => {
+              const cell = input.closest("td");
+              return cell && cell.cellIndex === 2; // Третья колонка (индекс 2)
+            })
+            .map((input) => parseFloat(input.value?.replace("%", "")) || 0)
+            .filter((val) => val !== 0);
+
+          // Собираем все торговые результаты
+          const allTrades = [
+            ...archive.flatMap((week) =>
+              week.trades
+                .filter((t) => t && t.value && t.value !== 0)
+                .map((t) => Number(t.value) || 0)
+            ),
+            ...currentWeekData,
+          ];
+
+          // Считаем статистику
+          const totalGrowth = allTrades.reduce((sum, val) => sum + val, 0);
+          const positiveTrades = allTrades.filter((val) => val > 0).length;
+          const totalWinRate =
+            allTrades.length > 0
+              ? (positiveTrades / allTrades.length) * 100
+              : 0;
+
+          // Обновляем элементы дашборда
+          const totalGrowthEl = document.getElementById("totalGrowth");
+          const totalWinRateEl = document.getElementById("totalWinRate");
+          const totalTradingDaysEl =
+            document.getElementById("totalTradingDays");
+
+          if (totalGrowthEl && totalWinRateEl && totalTradingDaysEl) {
+            totalGrowthEl.textContent = totalGrowth.toFixed(2) + "%";
+            totalWinRateEl.textContent = totalWinRate.toFixed(0) + "%";
+            totalTradingDaysEl.textContent = archive.length;
+
+            // Обновляем цвета
+            totalGrowthEl.className = `text-2xl font-bold ${
+              totalGrowth > 0 ? "text-green-400" : "text-red-400"
+            }`;
+            totalWinRateEl.className = `text-2xl font-bold ${
+              totalWinRate > 50 ? "text-green-400" : "text-red-400"
+            }`;
+          }
+        }
+
+        // Функция обновления статистики
+        function updateStats() {
+          // Получаем все значения из инпутов
+          const values = Array.from(inputs)
+            .map((input) => (input.value ? parseFloat(input.value) : null))
+            .filter((val) => val !== null);
+
+          // Обновляем общее количество сделок
+          totalTrades.textContent = values.length;
+
+          // Обновляем винрейт
+          const positiveValues = values.filter((val) => val > 0).length;
+          const winRateValue =
+            values.length > 0 ? (positiveValues / values.length) * 100 : 0;
+          winRate.textContent = winRateValue.toFixed(0) + "%";
+          winRate.className = `text-2xl font-bold ${
+            winRateValue > 50 ? "text-green-400" : "text-red-400"
+          }`;
+
+          // Обновляем общий результат
+          const totalValue = values.reduce((sum, val) => sum + val, 0);
+          totalResult.textContent = totalValue.toFixed(2) + "%";
+          totalResult.className = `text-2xl font-bold ${
+            totalValue > 0 ? "text-green-400" : "text-red-400"
+          }`;
+
+          // Обновляем общую статистику
+          updateTotalStats();
+        }
+
+        // Первоначальное обновление статистики
+        updateStats();
+
+        // Обработчик очистки данных
+        clearDataBtn.addEventListener("click", () => {
+          if (confirm("Вы уверены, что хотите удалить все данные?")) {
+            localStorage.removeItem("weeklyData");
+            inputs.forEach((input) => {
+              input.value = "";
+              input.className =
+                "w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600 text-white";
+
+              // Удаляем цветной процент
+              const oldSuffix = input.parentNode.querySelector("span");
+              if (oldSuffix) oldSuffix.remove();
+            });
+            updateStats();
+          }
+        });
+
+        // Функция архивации текущей недели
+        function archiveCurrentWeek() {
+          // Используем сохраненную дату начала недели или текущую
+          const savedWeekStart = localStorage.getItem("selectedWeekStart");
+          const weekStart = savedWeekStart
+            ? new Date(savedWeekStart)
+            : getCurrentWeekStart();
+          const weekKey = formatDate(weekStart);
+
+          // Получаем текущие данные
+          const currentData = Array.from(inputs).map((input) => ({
+            value: input.value ? parseFloat(input.value.replace("%", "")) : 0,
+            day: input.closest("tr").querySelector("td:first-child")
+              .textContent,
+          }));
+
+          // Считаем статистику
+          const trades = currentData.filter((d) => d.value !== 0);
+          const stats = {
+            totalTrades: trades.length,
+            totalResult: trades.reduce((sum, d) => sum + d.value, 0),
+            winRate:
+              trades.length > 0
+                ? trades.reduce((sum, d) => sum + d.value, 0) > 0
+                  ? 100
+                  : 0
+                : 0,
+            weekStart: weekKey,
+            weekEnd: formatDate(
+              new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000)
+            ),
+            trades: currentData,
+          };
+
+          // Сохраняем в архив
+          const archive = JSON.parse(
+            localStorage.getItem("weeklyArchive") || "[]"
+          );
+          archive.push(stats);
+          localStorage.setItem("weeklyArchive", JSON.stringify(archive));
+
+          // Очищаем текущую неделю
+          inputs.forEach((input) => {
+            input.value = "";
+            updateInputColor(input);
+          });
+
+          // Очищаем данные текущей недели в localStorage
+          const savedData = JSON.parse(
+            localStorage.getItem("weeklyData") || "{}"
+          );
+          delete savedData[weekKey]; // Удаляем только текущую неделю
+          localStorage.setItem("weeklyData", JSON.stringify(savedData));
+
+          // Обновляем статистику
+          updateStats();
+
+          // Обновляем даты на следующую неделю
+          const nextWeekStart = new Date(weekStart);
+          nextWeekStart.setDate(weekStart.getDate() + 7);
+          const nextWeekEnd = new Date(nextWeekStart);
+          nextWeekEnd.setDate(nextWeekStart.getDate() + 6);
+          document.getElementById("currentWeek").textContent = `${formatDate(
+            nextWeekStart,
+            "display"
+          )} - ${formatDate(nextWeekEnd, "display")}`;
+
+          // Показываем уведомление
+          alert(
+            `Неделя успешно архивирована!\n\nВсего сделок: ${
+              stats.totalTrades
+            }\nОбщий результат: ${stats.totalResult.toFixed(2)}%\nВинрейт: ${(
+              (stats.trades.filter((t) => t.value > 0).length /
+                stats.trades.filter((t) => t.value !== 0).length) *
+              100
+            ).toFixed(0)}%`
+          );
+        }
+
+        // Обработчик кнопки "Начать новую неделю"
+        startNewWeekBtn.addEventListener("click", () => {
+          const hasData = Array.from(inputs).some((input) => input.value);
+
+          if (!hasData) {
+            alert("Нет данных для архивации.");
+            return;
+          }
+
+          if (
+            confirm(
+              "Вы уверены, что хотите начать новую неделю?\nТекущая неделя будет архивирована."
+            )
+          ) {
+            archiveCurrentWeek();
+          }
+        });
+
+        // Обработчик сброса статистики
+        clearStats.addEventListener("click", () => {
+          if (
+            confirm(
+              "Вы уверены, что хотите сбросить всю статистику?\nЭто действие нельзя отменить."
+            )
+          ) {
+            // Очищаем архив
+            localStorage.removeItem("weeklyArchive");
+            // Очищаем текущую неделю
+            localStorage.removeItem("weeklyData");
+            // Очищаем инпуты
+            inputs.forEach((input) => {
+              input.value = "";
+              const oldSuffix = input.parentNode.querySelector("span");
+              if (oldSuffix) oldSuffix.remove();
+              input.className =
+                "w-full bg-gray-900/20 border-2 border-gray-700/30 rounded-lg px-3 pr-6 py-2 text-center focus:outline-none group-hover:border-gray-600/50 focus:border-blue-500/30 focus:bg-gray-900/30 transition-all placeholder-gray-600 text-white";
+            });
+
+            // Обновляем статистику и дашборд
+            updateStats();
+
+            // Сбрасываем значения в дашборде
+            const totalGrowthEl = document.getElementById("totalGrowth");
+            const totalWinRateEl = document.getElementById("totalWinRate");
+            const totalTradingDaysEl =
+              document.getElementById("totalTradingDays");
+
+            totalGrowthEl.textContent = "0%";
+            totalWinRateEl.textContent = "0%";
+            totalTradingDaysEl.textContent = "0";
+
+            totalGrowthEl.className = "text-2xl font-bold text-gray-400";
+            totalWinRateEl.className = "text-2xl font-bold text-gray-400";
+
+            // Обновляем общую статистику
+            updateTotalStats();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
