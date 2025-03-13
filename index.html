@@ -25,45 +25,136 @@
   <body class="bg-gray-900">
     <div class="flex min-h-screen">
       <!-- Боковое меню -->
-      <div class="w-64 bg-gray-800 shadow-md p-6">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
-            Настройки
-          </h2>
+      <div
+        class="w-72 bg-gray-800/50 backdrop-blur-lg border-r border-gray-700/50 p-8"
+      >
+        <div class="mb-8">
+          <h1 class="text-xl font-semibold text-white mb-1">Trading Tools</h1>
+          <p class="text-sm text-gray-400">Инструменты для трейдинга</p>
         </div>
-        <form id="settingsForm" class="space-y-4">
-          <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Баланс (USDT)
-            </label>
-            <input
-              inputmode="decimal"
-              id="defaultBalance"
-              class="mt-1 block w-full rounded-md border-gray-300 py-2 px-4 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
-          </div>
-          <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Уровень риска (%)
-            </label>
-            <input
-              inputmode="decimal"
-              id="defaultRisk"
-              step="0.1"
-              class="mt-1 block w-full rounded-md border-gray-300 py-2 px-4 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
-          </div>
-          <button
-            type="submit"
-            class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors"
+        <nav class="space-y-1">
+          <a
+            href="index.html"
+            class="flex items-center px-4 py-3 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20"
           >
-            Сохранить настройки
-          </button>
-        </form>
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
+            </svg>
+            Калькулятор
+          </a>
+          <a
+            href="profit.html"
+            class="flex items-center px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+          >
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            Моя прибыль
+          </a>
+          <a
+            href="archive.html"
+            class="flex items-center px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+          >
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            Архив
+          </a>
+          <div class="mt-8 border-gray-700/50">
+            <button
+              id="settingsBtn"
+              class="flex items-center w-full px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+            >
+              <svg
+                class="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              Настройки
+            </button>
+            <!-- Форма настроек (скрыта по умолчанию) -->
+            <div id="settingsForm" class="hidden mt-4 px-2">
+              <div class="space-y-4 bg-gray-800/50 p-4 rounded-xl">
+                <div>
+                  <label class="block text-sm text-gray-400 mb-1">
+                    Баланс (USDT)
+                  </label>
+                  <input
+                    type="number"
+                    id="defaultBalance"
+                    class="w-full bg-gray-900/50 border border-gray-700/50 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500/50"
+                    placeholder="Введите сумму"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm text-gray-400 mb-1">
+                    Риск (%)
+                  </label>
+                  <input
+                    type="number"
+                    id="defaultRisk"
+                    step="0.1"
+                    class="w-full bg-gray-900/50 border border-gray-700/50 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500/50"
+                    placeholder="Введите процент"
+                  />
+                </div>
+                <button
+                  id="saveSettings"
+                  class="w-full bg-blue-500/20 border border-blue-500/20 text-blue-400 py-2 px-4 rounded-lg hover:bg-blue-500/30 transition-colors"
+                >
+                  Сохранить
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <div class="mt-auto pt-8 border-t border-gray-700/50 mt-8">
+          <div class="text-xs text-gray-400">Версия 1.0.0</div>
+        </div>
       </div>
 
       <!-- Основной контент -->
@@ -188,5 +279,65 @@
     </div>
 
     <script src="app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Настройки
+        const settingsBtn = document.getElementById("settingsBtn");
+        const settingsForm = document.getElementById("settingsForm");
+        const defaultBalance = document.getElementById("defaultBalance");
+        const defaultRisk = document.getElementById("defaultRisk");
+        const saveSettings = document.getElementById("saveSettings");
+        const balanceInput = document.getElementById("balance");
+        const riskInput = document.getElementById("risk");
+
+        // Загружаем сохраненные настройки
+        const settings = JSON.parse(localStorage.getItem("settings") || "{}");
+        if (defaultBalance) defaultBalance.value = settings.balance || "";
+        if (defaultRisk) defaultRisk.value = settings.risk || "";
+
+        // Устанавливаем значения в калькулятор при загрузке
+        if (balanceInput && settings.balance)
+          balanceInput.value = settings.balance;
+        if (riskInput && settings.risk) riskInput.value = settings.risk;
+
+        // Показать/скрыть форму настроек
+        settingsBtn.addEventListener("click", () => {
+          settingsForm.classList.toggle("hidden");
+          settingsBtn.classList.toggle("text-blue-400");
+          settingsBtn.classList.toggle("bg-blue-500/10");
+          settingsBtn.classList.toggle("border");
+          settingsBtn.classList.toggle("border-blue-500/20");
+        });
+
+        // Сохранение настроек
+        saveSettings.addEventListener("click", () => {
+          const settings = {
+            balance: defaultBalance.value,
+            risk: defaultRisk.value,
+          };
+          localStorage.setItem("settings", JSON.stringify(settings));
+
+          // Обновляем поля калькулятора
+          if (balanceInput) balanceInput.value = settings.balance;
+          if (riskInput) riskInput.value = settings.risk;
+
+          // Анимация успешного сохранения
+          saveSettings.textContent = "Сохранено!";
+          saveSettings.classList.add(
+            "bg-green-500/20",
+            "border-green-500/20",
+            "text-green-400"
+          );
+          setTimeout(() => {
+            saveSettings.textContent = "Сохранить";
+            saveSettings.classList.remove(
+              "bg-green-500/20",
+              "border-green-500/20",
+              "text-green-400"
+            );
+          }, 2000);
+        });
+      });
+    </script>
   </body>
 </html>
